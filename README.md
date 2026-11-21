@@ -1,6 +1,6 @@
 # Mathematical Imaging and Inverse Problems
 
-This repository contains the compilation of my work with Professor Luminita Vese on mathematical imaging and inverse problems. You can find expository papers/code/projects on the following topics:
+This repository contains the compilation of my work with Professor Luminita Vese on mathematical imaging and inverse problems. You can find expositions/code/projects on the following topics:
 
 - 2026 Summer & Fall:
   - Fourier methods for image restoration & code implementation
