@@ -1,0 +1,667 @@
+\documentclass[11pt]{article}
+\usepackage[letterpaper,margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern,microtype}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{enumitem,booktabs}
+\usepackage{xcolor}
+\usepackage[colorlinks=true,linkcolor=blue!45!black,citecolor=blue!45!black,urlcolor=blue!45!black]{hyperref}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small Fourier methods for image restoration}
+\fancyhead[R]{\small\thepage}
+\setlength{\headheight}{14pt}
+\renewcommand{\headrulewidth}{0.3pt}
+\setlength{\parskip}{4pt}
+\setlength{\parindent}{1.2em}
+\setlength{\emergencystretch}{2em}
+\numberwithin{equation}{section}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+\newcommand{\R}{\mathbb R}
+\newcommand{\C}{\mathbb C}
+\newcommand{\Sch}{\mathcal S}
+\newcommand{\F}{\mathcal F}
+\newcommand{\dd}{\,d}
+\newcommand{\norm}[1]{\left\|#1\right\|}
+\newcommand{\abs}[1]{\left|#1\right|}
+\newcommand{\ip}[2]{\left\langle #1,#2\right\rangle}
+\newcommand{\wh}[1]{\widehat{#1}}
+\DeclareMathOperator{\RePart}{Re}
+\hypersetup{pdftitle={Fourier Methods for Quadratic Image Restoration and Elliptic Regularity},pdfauthor={}}
+\title{Fourier Methods for Quadratic Image Restoration\newline and Elliptic Regularity}
+\author{}
+\date{Expository draft \quad November 20, 2026}
+\begin{document}
+\maketitle
+\vspace{-0.6cm}
+\begin{abstract}
+We study the quadratic restoration energy \(\norm{u-f}_2^2+\lambda\norm{\nabla u}_2^2\) on \(H^1(\R^n)\). Fourier transformation and completion of the square give its unique minimizer and an exact energy-gap identity. The Euler--Lagrange equation connects this problem to \(-\Delta u+k^2u=g\). For \(k\ne0\), we prove existence and uniqueness in \(H^{s+2}\) for every \(g\in H^s\), together with a stability estimate. The appendix proves Fourier inversion by Gaussian regularization.
+\end{abstract}
+\setcounter{tocdepth}{1}
+\tableofcontents
+\clearpage
+
+\section{The image restoration problem}\label{sec:problem}
+Let \(f\in L^2(\R^n)\) be a real-valued observed image. We seek a restored image \(u\) that balances agreement with \(f\) against spatial variation by minimizing
+\begin{equation}\label{eq:energy}
+ F_\lambda(u)=\int_{\R^n}|u(x)-f(x)|^2\dd x
+       +\lambda\int_{\R^n}|\nabla u(x)|^2\dd x,
+       \qquad \lambda>0.
+\end{equation}
+The first term measures disagreement with the data; the second penalizes spatial variation. The parameter \(\lambda\) sets the strength of this penalty. Images correspond to \(n=2\), and signals to \(n=1\).
+
+The admissible space is
+\[
+ H^1(\R^n)=\{u\in L^2(\R^n):\partial_{x_j}u\in L^2(\R^n)
+                    \text{ for }1\le j\le n\},
+\]
+with weak derivatives as defined in Section~\ref{sec:tools}. The energy is finite on this space. We seek a real \(u_\lambda\in H^1(\R^n)\) such that
+\begin{equation}\label{eq:minproblem}
+ F_\lambda(u_\lambda)\le F_\lambda(v)
+       \qquad\text{for every real }v\in H^1(\R^n).
+\end{equation}
+
+This model is discussed in Vese's image-processing notes~\cite{pcmi}. We work on \(\R^n\); a bounded image domain requires boundary conditions or an extension of the data.
+
+\section{Fourier tools for the energy}\label{sec:tools}
+The Fourier transform preserves the \(L^2\) norm and converts derivatives into multiplication by frequency. These two facts allow us to rewrite the energy.
+
+\subsection{Plancherel's theorem and differentiation}
+We use the Fourier convention
+\[
+ \wh u(\xi)=\int_{\R^n}u(x)e^{-2\pi i x\cdot\xi}\dd x.
+\]
+For general \(L^2\) functions, the transform is defined by the extension in Plancherel's theorem below.
+
+\begin{samepage}
+Let \(\Sch(\R^n)\) denote the Schwartz space. Its elements are smooth functions for which
+\[
+ \sup_{x\in\R^n}|x^\alpha D^\beta u(x)|<\infty
+\]
+for every pair of multi-indices \(\alpha,\beta\in\mathbb N_0^n\), where \(\mathbb N_0=\{0,1,2,\ldots\}\). Thus each component satisfies \(\alpha_j\ge0\) and \(\beta_j\ge0\). We use the notation
+\begin{align*}
+ |\alpha|&=\alpha_1+\cdots+\alpha_n,\\
+ x^\alpha&=x_1^{\alpha_1}\cdots x_n^{\alpha_n},\\
+ D^\beta&=\partial_{x_1}^{\beta_1}\cdots\partial_{x_n}^{\beta_n}.
+\end{align*}
+Gaussians and smooth compactly supported functions belong to \(\Sch\). Its decay conditions justify the integrations below.
+\end{samepage}
+
+\begin{theorem}[Plancherel]
+The Fourier transform on \(\Sch(\R^n)\) extends uniquely to a unitary map from \(L^2(\R^n)\) onto itself. In particular,
+\begin{align}
+ \int_{\R^n}u\overline v\dd x
+   &=\int_{\R^n}\wh u\,\overline{\wh v}\dd\xi,\label{eq:parseval}\\
+ \norm{u}_2&=\norm{\wh u}_2.\notag
+\end{align}
+\end{theorem}
+We use Plancherel's theorem as a standard result; see \cite[Section 6]{project}. The inner-product formula is Parseval's identity. Surjectivity gives existence of inverse transforms in \(L^2\), and norm preservation gives uniqueness. Equality in \(L^2\) is understood almost everywhere.
+
+\begin{proposition}[Differentiation identities]\label{prop:derivatives}
+For \(u\in\Sch(\R^n)\),
+\begin{align}
+ \wh{\partial_{x_j}u}(\xi)&=2\pi i\xi_j\wh u(\xi),\label{eq:derivative}\\
+ \partial_{\xi_j}\wh u(\xi)&=-2\pi i\,\wh{x_ju}(\xi),\label{eq:freqderivative}\\
+ \wh{\Delta u}(\xi)&=-4\pi^2|\xi|^2\wh u(\xi).\label{eq:laplace}
+\end{align}
+\end{proposition}
+\begin{proof}
+For \eqref{eq:derivative}, fix the other coordinates and integrate by parts in \(x_j\). The boundary term vanishes by the decay of \(u\), and
+\[
+ \partial_{x_j}e^{-2\pi i x\cdot\xi}
+       =-2\pi i\xi_j e^{-2\pi i x\cdot\xi}.
+\]
+Fubini's theorem then gives
+\[
+ \wh{\partial_{x_j}u}(\xi)
+ =-\int u(x)\partial_{x_j}e^{-2\pi i x\cdot\xi}\dd x
+ =2\pi i\xi_j\wh u(\xi).
+\]
+For \eqref{eq:freqderivative}, take a difference quotient in \(\xi_j\). The inequality \(|e^{it}-1|\le |t|\) bounds its integrand by \(2\pi|x_ju(x)|\), an integrable function. Dominated convergence therefore permits differentiation under the integral and gives the stated formula. Finally, apply \eqref{eq:derivative} twice in each coordinate and sum:
+\[
+ \wh{\Delta u}=\sum_{j=1}^n(2\pi i\xi_j)^2\wh u
+             =-4\pi^2|\xi|^2\wh u.
+\]
+\end{proof}
+
+Iteration gives
+\begin{equation}\label{eq:multi}
+ \wh{D^\alpha u}=(2\pi i\xi)^\alpha\wh u.
+\end{equation}
+In the energy, \(|2\pi i\xi_j\wh u|^2=4\pi^2\xi_j^2|\wh u|^2\).
+
+The same identities show that the Fourier transform maps \(\Sch\) continuously into itself. Indeed, each expression \(\xi^\alpha D_\xi^\beta\wh u\) is a constant multiple of the transform of \(D^\alpha(x^\beta u)\). Its absolute value is bounded by the \(L^1\) norm of this Schwartz function, which is controlled by finitely many Schwartz seminorms of \(u\). The inverse transform has the same property, and inversion (Appendix~\ref{app:inversion}) shows that these maps are inverses on \(\Sch\).
+
+\subsection{Weak derivatives and admissible functions}
+Write \(C_c^\infty(\R^n)\) for the smooth compactly supported test functions. Weak derivatives are defined by integration by parts against these functions.
+
+\begin{definition}[Weak derivative]
+For \(u,g\in L^1_{\mathrm{loc}}(\R^n)\), we say that \(g=D^\alpha u\) weakly if
+\begin{equation}\label{eq:weakderivative}
+ \int u D^\alpha\varphi\dd x
+       =(-1)^{|\alpha|}\int g\varphi\dd x
+ \quad\text{for every }\varphi\in C_c^\infty(\R^n).
+\end{equation}
+\end{definition}
+For an integer \(m\ge0\), define
+\begin{align*}
+ H^m(\R^n)&=\{u\in L^2:D^\alpha u\in L^2
+                       \text{ for every }|\alpha|\le m\},\\
+ \norm{u}_{H^m,\mathrm{der}}^2
+      &=\sum_{|\alpha|\le m}\norm{D^\alpha u}_2^2.
+\end{align*}
+The term with \(\alpha=0\) is \(\norm u_2^2\). Following \cite[p.~1]{vese-sobolev}, the derivative seminorm uses derivatives of order exactly \(m\):
+\begin{align*}
+ |u|_{H^m}^2&=\sum_{|\alpha|=m}\norm{D^\alpha u}_2^2,\\
+ |u|_{H^1}^2&=\norm{\nabla u}_2^2.
+\end{align*}
+Thus the restoration penalty is the squared \(H^1\) seminorm:
+\[
+ F_\lambda(u)=\norm{u-f}_2^2+\lambda|u|_{H^1}^2.
+\]
+Each multi-index occurs once in these sums. The Fourier characterization below proves the agreement of integer-order spaces stated in \cite[p.~2]{vese-sobolev}.
+
+\begin{proposition}[Fourier characterization]\label{prop:sobolev}
+Let \(u\in L^2(\R^n)\) and \(m\ge0\) be an integer. Then
+\begin{equation}\label{eq:sobolevcharacterization}
+ u\in H^m(\R^n)
+ \quad\Longleftrightarrow\quad
+ (1+|\xi|^2)^{m/2}\wh u(\xi)\in L^2(\R^n).
+\end{equation}
+The weighted norm
+\begin{equation}\label{eq:fouriernorm}
+ \norm u_{H^m}^2=\int(1+|\xi|^2)^m|\wh u(\xi)|^2\dd\xi
+\end{equation}
+is equivalent to \(\norm u_{H^m,\mathrm{der}}\).
+\end{proposition}
+\begin{proof}
+First we justify the derivative rule for weak derivatives. Suppose \(g=D^\alpha u\) and both functions belong to \(L^2\). Identity \eqref{eq:weakderivative} extends to Schwartz test functions by multiplying them by expanding smooth cutoffs and passing to the limit in \(L^2\). Using conjugated test functions and Parseval, it becomes
+\[
+ \int\wh g\,\overline{\wh\varphi}\dd\xi
+ =(-1)^{|\alpha|}\int\wh u\,
+                   \overline{(2\pi i\xi)^\alpha\wh\varphi}\dd\xi
+ =\int(2\pi i\xi)^\alpha\wh u\,
+                   \overline{\wh\varphi}\dd\xi.
+\]
+The Fourier transform maps \(\Sch\) onto itself. Testing this equality with all Schwartz frequency functions shows
+\(\wh g=(2\pi i\xi)^\alpha\wh u\) almost everywhere. The right side is locally integrable, so equality against all smooth compactly supported tests identifies the two functions.
+
+If \(u\in H^m\), Plancherel now gives
+\begin{align}
+ \norm u_{H^m,\mathrm{der}}^2
+    &=\int P_m(\xi)|\wh u(\xi)|^2\dd\xi,\label{eq:exactweight}\\
+ P_m(\xi)&=\sum_{|\alpha|\le m}(2\pi)^{2|\alpha|}\xi^{2\alpha}.\notag
+\end{align}
+The multinomial formula gives
+\[
+ (1+|\xi|^2)^m
+ =\sum_{|\alpha|\le m}
+   \frac{m!}{(m-|\alpha|)!\,\alpha_1!\cdots\alpha_n!}\xi^{2\alpha}.
+\]
+These two finite sums contain the same nonnegative monomials with positive coefficients. Taking the minimum and maximum of the ratios of their coefficients yields constants \(c,C>0\), depending only on \(m,n\), such that
+\begin{equation}\label{eq:weightcomparison}
+ c(1+|\xi|^2)^m\le P_m(\xi)\le C(1+|\xi|^2)^m.
+\end{equation}
+The lower bound proves the forward implication.
+
+Conversely, assume the weighted integrability in \eqref{eq:sobolevcharacterization}. For \(|\alpha|\le m\), the upper bound in \eqref{eq:weightcomparison} shows that
+\(h_\alpha=(2\pi i\xi)^\alpha\wh u\in L^2\). Let
+\(g_\alpha=\F^{-1}h_\alpha\in L^2\). For \(\varphi\in C_c^\infty\), Parseval gives
+\begin{align*}
+ \int g_\alpha\overline\varphi\dd x
+ &=\int(2\pi i\xi)^\alpha\wh u\,\overline{\wh\varphi}\dd\xi\\
+ &=(-1)^{|\alpha|}\int\wh u\,
+                   \overline{\wh{D^\alpha\varphi}}\dd\xi
+ =(-1)^{|\alpha|}\int u\,\overline{D^\alpha\varphi}\dd x.
+\end{align*}
+This is the defining identity for \(D^\alpha u=g_\alpha\). Thus all required weak derivatives belong to \(L^2\). Integrating \eqref{eq:weightcomparison} and taking square roots gives
+\[
+ \sqrt c\,\norm u_{H^m}\le\norm u_{H^m,\mathrm{der}}
+                         \le\sqrt C\,\norm u_{H^m}.
+\]
+\end{proof}
+
+For first derivatives, \eqref{eq:exactweight} reads
+\begin{equation}\label{eq:h1exact}
+ \norm u_2^2+\norm{\nabla u}_2^2
+       =\int(1+4\pi^2|\xi|^2)|\wh u|^2\dd\xi.
+\end{equation}
+We use the Fourier norm \eqref{eq:fouriernorm} for \(\norm{\cdot}_{H^m}\). Energy identities retain the exact \(2\pi\) factors.
+
+\begin{example}[The second-order weight in one dimension]
+For \(u\in H^2(\R)\),
+\[
+ \norm u_2^2+\norm{u'}_2^2+\norm{u''}_2^2
+  =\int_{\R}(1+4\pi^2\xi^2+16\pi^4\xi^4)|\wh u(\xi)|^2\dd\xi.
+\]
+The Fourier norm uses \((1+\xi^2)^2=1+2\xi^2+\xi^4\). Comparing coefficients gives equivalent norms.
+\end{example}
+
+\section{Constructing the unique minimizer}\label{sec:minimizer}
+For \(u\in H^1\), Parseval and \eqref{eq:derivative} give
+\begin{equation}\label{eq:fourierenergy}
+ F_\lambda(u)=\int_{\R^n}
+  \bigl(|\wh u(\xi)-\wh f(\xi)|^2
+      +4\pi^2\lambda|\xi|^2|\wh u(\xi)|^2\bigr)\dd\xi.
+\end{equation}
+At each frequency, the integrand is a quadratic function of the complex number \(\wh u(\xi)\).
+
+\subsection{The scalar calculation}
+\begin{lemma}[Completing the square]\label{lem:square}
+For \(z,b\in\C\) and \(c\ge0\),
+\begin{equation}\label{eq:square}
+ |z-b|^2+c|z|^2
+ =(1+c)\left|z-\frac b{1+c}\right|^2
+      +\frac c{1+c}|b|^2.
+\end{equation}
+The expression is uniquely minimized at \(z=b/(1+c)\).
+\end{lemma}
+\begin{proof}
+Expanding the left side gives
+\((1+c)|z|^2-2\RePart(z\overline b)+|b|^2\).
+Expanding the first term on the right gives the same first two terms and \(|b|^2/(1+c)\). The remaining term supplies the difference. The coefficient \(1+c\) is positive, so the square vanishes exactly at the stated value.
+\end{proof}
+Apply the lemma with
+\begin{align*}
+ z&=\wh u(\xi),\\
+ b&=\wh f(\xi),\\
+ c&=4\pi^2\lambda|\xi|^2.
+\end{align*}
+The resulting candidate is \(\wh{u_\lambda}=m_\lambda\wh f\), where
+\begin{equation}\label{eq:multiplier}
+ m_\lambda(\xi)=\frac1{1+4\pi^2\lambda|\xi|^2}.
+\end{equation}
+We must verify that this candidate belongs to real \(H^1\) and minimizes the full integral.
+
+\subsection{Admissibility, minimality, and uniqueness}
+\begin{theorem}[The restoration minimizer]\label{thm:minimizer}
+Let \(f\in L^2(\R^n)\) be real-valued and let \(\lambda>0\). There is a unique real minimizer \(u_\lambda\in H^1(\R^n)\) of \(F_\lambda\). Its Fourier transform is \(m_\lambda\wh f\), and \(u_\lambda\in H^2(\R^n)\). For every real \(v\in H^1\),
+\begin{equation}\label{eq:gap}
+ F_\lambda(v)-F_\lambda(u_\lambda)
+ =\norm{v-u_\lambda}_2^2
+      +\lambda\norm{\nabla(v-u_\lambda)}_2^2.
+\end{equation}
+\end{theorem}
+\begin{proof}
+\emph{Construction.} Since \(0<m_\lambda\le1\) and \(\wh f\in L^2\), the product \(m_\lambda\wh f\) belongs to \(L^2\). Surjectivity of the \(L^2\) Fourier transform produces a function \(u_\lambda\) with this transform; injectivity makes that function unique in \(L^2\).
+
+\emph{Admissibility.} Put \(a_\lambda=\min\{1,4\pi^2\lambda\}>0\). Then
+\[
+ 1+4\pi^2\lambda|\xi|^2\ge a_\lambda(1+|\xi|^2),
+\]
+and hence
+\begin{align}\label{eq:h2gain}
+ \norm{u_\lambda}_{H^2}^2
+ &=\int\frac{(1+|\xi|^2)^2}{(1+4\pi^2\lambda|\xi|^2)^2}
+                                    |\wh f(\xi)|^2\dd\xi\notag\\
+ &\le a_\lambda^{-2}\norm f_2^2.
+\end{align}
+Proposition~\ref{prop:sobolev} gives \(u_\lambda\in H^2\subset H^1\).
+For real \(f\), the identity
+\(\wh f(-\xi)=\overline{\wh f(\xi)}\) holds almost everywhere, by approximation from real Schwartz functions. Since \(m_\lambda\) is real and even, \(\wh{u_\lambda}\) has the same symmetry. The transform of \(\overline{u_\lambda}\) is \(\overline{\wh{u_\lambda}(-\xi)}\); injectivity therefore gives \(\overline{u_\lambda}=u_\lambda\).
+
+\emph{The energy comparison.} Integrating \eqref{eq:square} in \eqref{eq:fourierenergy} gives
+\begin{align}\label{eq:completedenergy}
+ F_\lambda(v)
+ &=\int(1+4\pi^2\lambda|\xi|^2)
+                    |\wh v-\wh{u_\lambda}|^2\dd\xi\notag\\
+ &\quad+\int\frac{4\pi^2\lambda|\xi|^2}
+                    {1+4\pi^2\lambda|\xi|^2}|\wh f|^2\dd\xi.
+\end{align}
+The first integral is finite because \(v-u_\lambda\in H^1\); the second is bounded by \(\norm f_2^2\). At \(v=u_\lambda\), the first integral vanishes. Subtracting that value and applying Parseval proves \eqref{eq:gap}. Its right side is nonnegative, so \(u_\lambda\) minimizes the energy. Equality forces \(\norm{v-u_\lambda}_2=0\), which proves uniqueness.
+\end{proof}
+
+The energy identity also evaluates the minimum:
+\begin{equation}\label{eq:minimum}
+ \min F_\lambda
+   =\int\frac{4\pi^2\lambda|\xi|^2}
+                    {1+4\pi^2\lambda|\xi|^2}|\wh f(\xi)|^2\dd\xi.
+\end{equation}
+For nonzero data this value is positive. Indeed, the multiplier is positive away from the single point \(\xi=0\), a set of Lebesgue measure zero. A zero integral would imply \(\wh f=0\) almost everywhere.
+
+If \(F_\lambda(v)-F_\lambda(u_\lambda)\le\varepsilon\), then \eqref{eq:gap} gives
+\begin{align*}
+ \norm{v-u_\lambda}_2&\le\sqrt\varepsilon,\\
+ \norm{\nabla(v-u_\lambda)}_2&\le\sqrt{\varepsilon/\lambda}.
+\end{align*}
+
+
+\section{From minimization to an elliptic equation}\label{sec:variation}
+The first variation expresses the minimizer's optimality condition as a PDE.
+
+\subsection{First variation and the weak equation}
+For real \(u,v\in H^1(\R^n)\) and \(\varepsilon\in\R\), expand
+\begin{align}\label{eq:variation}
+ F_\lambda(u+\varepsilon v)
+ &=F_\lambda(u)
+   +2\varepsilon\left(\int(u-f)v\dd x
+                  +\lambda\int\nabla u\cdot\nabla v\dd x\right)\notag\\
+ &\quad+\varepsilon^2\left(\norm v_2^2
+                         +\lambda\norm{\nabla v}_2^2\right).
+\end{align}
+Cauchy--Schwarz makes each term finite. At a minimizer, the derivative with respect to \(\varepsilon\) vanishes at zero, giving
+\begin{equation}\label{eq:weakEL}
+ \int(u-f)v\dd x+\lambda\int\nabla u\cdot\nabla v\dd x=0
+              \qquad(v\in H^1(\R^n)\text{ real}).
+\end{equation}
+This is the weak Euler--Lagrange equation.
+
+Write \(\langle T,v\rangle\) for the action of a distribution on a test function. For \(v\in C_c^\infty\),
+\[
+ \ip{\Delta u}{v}=-\int\nabla u\cdot\nabla v\dd x.
+\]
+Consequently \eqref{eq:weakEL} says that
+\begin{equation}\label{eq:ELpde}
+ u-\lambda\Delta u=f
+\end{equation}
+as distributions.
+
+\subsection{Why the equation characterizes the minimizer}
+\begin{proposition}\label{prop:equivalence}
+For real \(u\in H^1(\R^n)\), the following conditions are equivalent:
+\begin{enumerate}[label=(\roman*),itemsep=2pt]
+ \item \(u\) minimizes \(F_\lambda\) over real \(H^1(\R^n)\).
+ \item \(u\) satisfies \eqref{eq:weakEL} for every real \(v\in H^1\).
+ \item \(u\) satisfies \eqref{eq:ELpde} in distributions.
+\end{enumerate}
+\end{proposition}
+\begin{proof}
+The preceding calculation proves (i) implies (ii), and (ii) implies (iii). For (iii) implies (ii), the distributional equation gives \eqref{eq:weakEL} for compactly supported smooth tests. Its left side defines a continuous linear functional of \(v\) in the \(H^1\) norm, since
+\[
+ \left|\int(u-f)v+\lambda\int\nabla u\cdot\nabla v\right|
+ \le\norm{u-f}_2\norm v_2
+             +\lambda\norm{\nabla u}_2\norm{\nabla v}_2.
+\]
+Density of \(C_c^\infty\) in \(H^1\) extends the identity to every \(v\in H^1\).
+
+Finally, assume (ii). Set \(\varepsilon=1\) in \eqref{eq:variation}. The linear term vanishes, leaving
+\[
+ F_\lambda(u+v)-F_\lambda(u)
+            =\norm v_2^2+\lambda\norm{\nabla v}_2^2\ge0.
+\]
+Every competitor is of the form \(u+v\), so (i) follows.
+\end{proof}
+
+By Proposition~\ref{prop:equivalence}, the weak solution is the minimizer in \(H^2\). Fourier transformation of \eqref{eq:ELpde} therefore gives
+\[
+ (1+4\pi^2\lambda|\xi|^2)\wh u(\xi)=\wh f(\xi).
+\]
+Division recovers the multiplier in Theorem~\ref{thm:minimizer}. Since \(u\in H^2\), the PDE also holds in \(L^2\).
+
+\section{Solving the PDE and gaining regularity}\label{sec:pde}
+The estimate \eqref{eq:h2gain} gives two orders of Sobolev regularity for \(L^2\) data. Problem 4 of \cite{vese-pde} asks for the corresponding result for \(-\Delta u+k^2u=g\) with \(g\in H^s\), for every real \(s\). We first define these spaces.
+
+\subsection{Tempered distributions and the Sobolev scale}
+The space \(\Sch'(\R^n)\) consists of continuous linear functionals on \(\Sch(\R^n)\), called tempered distributions. We write \(\ip T\varphi\) for the value of \(T\) on a Schwartz test function \(\varphi\). Continuity is measured using the Schwartz seminorms
+\(\sup_x|x^\alpha D^\beta\varphi(x)|\). In particular, convergence of all these seminorms to zero implies \(\ip T\varphi\to0\).
+
+An \(L^2\) function defines a tempered distribution by
+\[
+ \ip u\varphi=\int u(x)\varphi(x)\dd x.
+\]
+Cauchy--Schwarz bounds this functional by \(\norm u_2\norm\varphi_2\), which is controlled by Schwartz seminorms. The Dirac mass acts by \(\ip{\delta_0}\varphi=\varphi(0)\).
+
+The Fourier transform and derivatives extend by duality:
+\begin{align*}
+ \ip{\wh T}\varphi&=\ip T{\wh\varphi},\\
+ \ip{D^\alpha T}\varphi&=(-1)^{|\alpha|}\ip T{D^\alpha\varphi}.
+\end{align*}
+These definitions use linear distributional pairings, without complex conjugation. They agree with the usual formulas for integrable functions. Since Fourier inversion maps \(\Sch\) onto itself, the Fourier transform is also invertible on \(\Sch'\). The derivative identity becomes
+\begin{equation}\label{eq:distributionderivative}
+ \wh{D^\alpha T}=(2\pi i\xi)^\alpha\wh T.
+\end{equation}
+It follows directly by applying the definitions to a test function and using Proposition~\ref{prop:derivatives}.
+
+\begin{definition}[Real-order Sobolev space, {\cite[p.~2]{vese-sobolev}}]
+For \(s\in\R\), define
+\begin{align}
+ H^s(\R^n)&=\{u\in\Sch':(1+|\xi|^2)^{s/2}\wh u\in L^2\},\notag\\
+ \norm u_{H^s}^2&=\int(1+|\xi|^2)^s|\wh u(\xi)|^2\dd\xi.\label{eq:Hsdefinition}
+\end{align}
+The weighted distribution in this definition must be represented by an \(L^2\) function.
+\end{definition}
+More explicitly, if \(h=(1+|\xi|^2)^{s/2}\wh u\in L^2\), then
+\(\wh u=(1+|\xi|^2)^{-s/2}h\). Thus \(\wh u\) has a locally square-integrable representative, which makes the displayed integral meaningful. These weighted \(L^2\) functions define tempered distributions: polynomial growth in the weight is absorbed by the rapid decay of a Schwartz test function.
+
+Plancherel gives \(H^0=L^2\), and Proposition~\ref{prop:sobolev} identifies nonnegative integer orders with the weak-derivative spaces. Positive orders impose stronger integrability at high frequencies; sufficiently negative orders include point sources.
+
+\begin{example}[A negative Sobolev order]
+The Fourier transform of \(\delta_0\) is the constant function \(1\). Therefore
+\[
+ \norm{\delta_0}_{H^s}^2=\int_{\R^n}(1+|\xi|^2)^s\dd\xi.
+\]
+The integrand is bounded near zero. In polar coordinates, its tail has the same convergence behavior as \(\int_1^\infty r^{2s+n-1}\dd r\), which converges precisely when \(s<-n/2\). Thus \(\delta_0\in H^s\) exactly when \(s<-n/2\).
+\end{example}
+
+\subsection{The existence and regularity theorem}
+The following theorem solves \cite[Problem 4]{vese-pde} and gives a norm estimate for the solution.
+\begin{theorem}[Two orders of Sobolev regularity]\label{thm:pde}
+Let \(k\in\R\setminus\{0\}\), \(s\in\R\), and \(g\in H^s(\R^n)\). There exists a unique \(u\in H^{s+2}(\R^n)\) satisfying
+\[
+ -\Delta u+k^2u=g
+\]
+in distributions. The solution is given by
+\begin{equation}\label{eq:pdesolution}
+ \wh u(\xi)=\frac{\wh g(\xi)}{k^2+4\pi^2|\xi|^2},
+\end{equation}
+and, with \(c_k=\min\{k^2,4\pi^2\}>0\),
+\begin{equation}\label{eq:pdeestimate}
+ \norm u_{H^{s+2}}\le c_k^{-1}\norm g_{H^s}.
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+\emph{Finding the candidate.} Fourier transformation of the equation gives
+\begin{equation}\label{eq:symbol}
+ (k^2+4\pi^2|\xi|^2)\wh u=\wh g.
+\end{equation}
+The denominator is positive at every frequency, suggesting \eqref{eq:pdesolution}.
+
+\emph{Constructing the solution and estimating its norm.} By assumption,
+\[
+ h(\xi)=(1+|\xi|^2)^{s/2}\wh g(\xi)\in L^2.
+\]
+Define \(\wh u\) by \eqref{eq:pdesolution}. The elementary estimate
+\begin{equation}\label{eq:denominatorbound}
+ k^2+4\pi^2|\xi|^2\ge c_k(1+|\xi|^2)
+\end{equation}
+gives
+\begin{align*}
+ (1+|\xi|^2)^{(s+2)/2}|\wh u(\xi)|
+ &=\frac{1+|\xi|^2}{k^2+4\pi^2|\xi|^2}|h(\xi)|\\
+ &\le c_k^{-1}|h(\xi)|.
+\end{align*}
+Thus \(\wh u\) is a tempered distribution whose inverse transform belongs to \(H^{s+2}\). Squaring and integrating proves \eqref{eq:pdeestimate}.
+
+\emph{Verifying the equation.} The construction gives \eqref{eq:symbol} as an equality of locally square-integrable functions, hence of distributions. Applying the inverse Fourier transform and \eqref{eq:distributionderivative} proves the PDE.
+
+\emph{Uniqueness.} Suppose \(u_1,u_2\in H^{s+2}\) solve the same equation. For \(w=u_1-u_2\),
+\[
+ (k^2+4\pi^2|\xi|^2)\wh w=0.
+\]
+The function \(\wh w\) is locally square integrable. Equality of the resulting distributions gives equality almost everywhere, and positivity of the multiplier implies \(\wh w=0\). Injectivity of the Fourier transform on \(\Sch'\) yields \(w=0\).
+\end{proof}
+
+Raising the Sobolev order from \(s\) to \(s+2\) introduces the factor \(1+|\xi|^2\) in the weighted transform. The denominator in \eqref{eq:pdesolution} absorbs this factor: its quadratic growth controls high frequencies, and \(k^2>0\) controls the origin.
+
+For example, \(g\in L^2\) gives \(u\in H^2\), and \(g\in H^{-1}\) gives \(u\in H^1\). The latter case includes data beyond the domain of the \(L^2\) restoration energy.
+
+\subsection{Continuous dependence and the restoration equation}
+\begin{corollary}[Stability]
+If \(u_1,u_2\) are the solutions for data \(g_1,g_2\in H^s\), then
+\[
+ \norm{u_1-u_2}_{H^{s+2}}
+       \le c_k^{-1}\norm{g_1-g_2}_{H^s}.
+\]
+\end{corollary}
+\begin{proof}
+Their difference solves the equation with right-hand side \(g_1-g_2\). Apply \eqref{eq:pdeestimate}.
+\end{proof}
+Existence, uniqueness, and this continuous-dependence estimate establish well-posedness.
+
+To recover image restoration, take \(k^2=\lambda^{-1}\) and \(g=\lambda^{-1}f\) in \eqref{eq:pdesolution}. Then
+\[
+ \wh u=\frac{\lambda^{-1}\wh f}{\lambda^{-1}+4\pi^2|\xi|^2}
+       =\frac{\wh f}{1+4\pi^2\lambda|\xi|^2}.
+\]
+The case \(s=0\) recovers the \(H^2\) regularity of the minimizer. More generally, restoration maps \(H^s\) into \(H^{s+2}\) for every real \(s\), with a bound depending on \(\lambda\).
+
+\section{What the solution tells us}\label{sec:meaning}
+\subsection{Frequency filtering and the parameter}
+Formula \eqref{eq:multiplier} describes the restoration as a low-pass filter. Frequencies with \(4\pi^2\lambda|\xi|^2\ll1\) are multiplied by a number close to one. At large \(|\xi|\), the multiplier behaves like \((4\pi^2\lambda|\xi|^2)^{-1}\). In particular, its value is \(1/2\) at
+\[
+ |\xi|=\frac1{2\pi\sqrt\lambda}.
+\]
+Increasing \(\lambda\) lowers this frequency and extends the range of substantially attenuated components. Rapidly oscillating noise is reduced by this mechanism. Edges and fine texture also contain high frequencies, so they may be smoothed in the reconstruction.
+
+Writing \(u_\lambda[f]\) for the restoration of \(f\), Plancherel and \(m_\lambda\le1\) give
+\begin{equation}\label{eq:contraction}
+ \norm{u_\lambda[f]-u_\lambda[h]}_2
+       =\norm{m_\lambda(\wh f-\wh h)}_2
+       \le\norm{f-h}_2.
+\end{equation}
+
+For fixed \(f\in L^2\), dominated convergence gives
+\begin{align}
+ u_\lambda&\longrightarrow f\quad\text{in }L^2\text{ as }\lambda\downarrow0,\label{eq:parameterlimits}\\
+ u_\lambda&\longrightarrow0\quad\text{in }L^2\text{ as }\lambda\to\infty.\notag
+\end{align}
+For the first limit, \(m_\lambda\to1\) and
+\(|m_\lambda-1|^2|\wh f|^2\le|\wh f|^2\). For the second, \(m_\lambda(\xi)\to0\) for every \(\xi\ne0\), hence almost everywhere, and \(|m_\lambda\wh f|^2\le|\wh f|^2\). Plancherel converts these frequency limits to \(L^2\) convergence. The large-parameter limit depends on the whole-space setting. In a periodic model, a constant mode survives and the limit is the spatial mean.
+
+\subsection{A spatial averaging formula in one dimension}
+The multiplier also has a useful spatial representation. Let
+\[
+ q_\lambda(x)=\frac1{2\sqrt\lambda}e^{-|x|/\sqrt\lambda}.
+\]
+Writing \(a=\lambda^{-1/2}\), direct integration on the two half-lines gives
+\begin{align*}
+ \wh{q_\lambda}(\xi)
+ &=\frac a2\left(\frac1{a+2\pi i\xi}+\frac1{a-2\pi i\xi}\right)\\
+ &=\frac{a^2}{a^2+4\pi^2\xi^2}
+ =\frac1{1+4\pi^2\lambda\xi^2}.
+\end{align*}
+The kernel is nonnegative and has integral one. Hence
+\begin{equation}\label{eq:kernel}
+ u_\lambda=q_\lambda*f
+\end{equation}
+as an equality in \(L^2(\R)\). To justify this for \(L^2\) data, use the convolution theorem for Schwartz data, approximate \(f\) in \(L^2\), and apply Young's inequality
+\(\norm{q_\lambda*f}_2\le\norm{q_\lambda}_1\norm f_2\).
+The exponential kernel averages over a spatial scale proportional to \(\sqrt\lambda\).
+
+\subsection{The role of the positive zeroth-order term}
+The assumption \(k\ne0\) in Theorem~\ref{thm:pde} prevents a singular denominator at the origin. At \(k=0\), the formal solution of \(-\Delta u=g\) is
+\[
+ \wh u(\xi)=\frac{\wh g(\xi)}{4\pi^2|\xi|^2},\qquad\xi\ne0.
+\]
+The possible growth near zero can obstruct membership in the required space.
+
+\begin{example}[Failure of an \(L^2\)-to-\(H^2\) conclusion]
+In one dimension choose \(g\in L^2(\R)\) by prescribing
+\(\wh g=\mathbf1_{[-1,1]}\). Such a function exists by Plancherel and is real by the symmetry of its transform. If \(u\in H^2(\R)\) satisfied \(-u''=g\), then
+\[
+ \wh u(\xi)=\frac1{4\pi^2\xi^2}
+       \qquad\text{for almost every }0<|\xi|<1.
+\]
+Its squared modulus has infinite integral near zero, since
+\(\int_0^1\xi^{-4}\dd\xi=\infty\). This contradicts \(u\in L^2\). Thus this datum has no \(H^2\) solution.
+\end{example}
+
+\appendix
+\section{Fourier inversion by Gaussian regularization}\label{app:inversion}
+Suppose \(f\in L^1(\R^n)\), \(\wh f\in L^1(\R^n)\), and \(f\) is continuous at \(x\). We will show
+\begin{equation}\label{eq:inversion}
+ f(x)=\int_{\R^n}\wh f(\xi)e^{2\pi i x\cdot\xi}\dd\xi.
+\end{equation}
+Direct substitution of the transform leads to an iterated integral whose integrand is \(f(y)e^{2\pi i(x-y)\cdot\xi}\). For nonzero \(f\),
+\[
+ \int\!\int\bigl|f(y)e^{2\pi i(x-y)\cdot\xi}\bigr|\dd y\dd\xi
+       =\norm f_1\int1\dd\xi=\infty.
+\]
+Thus the absolute-integrability hypothesis of Fubini's theorem fails. We insert a Gaussian factor to obtain an integrable expression.
+
+\subsection{The Gaussian transform}
+The Gaussian integral is \(\int_\R e^{-\pi x^2}\dd x=1\), as follows by squaring and using polar coordinates. Let
+\[
+ H(\xi)=\int_\R e^{-\pi x^2}e^{-2\pi i x\xi}\dd x.
+\]
+Differentiation under the integral is justified by the integrable majorant \(2\pi|x|e^{-\pi x^2}\). Since
+\((e^{-\pi x^2})'=-2\pi x e^{-\pi x^2}\), integration by parts gives
+\[
+ H'(\xi)=i\int_\R(e^{-\pi x^2})'e^{-2\pi i x\xi}\dd x
+         =-2\pi\xi H(\xi).
+\]
+Together with \(H(0)=1\), this yields \(H(\xi)=e^{-\pi\xi^2}\). Taking products in the coordinates and rescaling proves
+\begin{equation}\label{eq:gaussiantransform}
+ \int_{\R^n}e^{-\pi t|\xi|^2}e^{2\pi i z\cdot\xi}\dd\xi
+       =t^{-n/2}e^{-\pi|z|^2/t}=:G_t(z).
+\end{equation}
+In particular, \(G_t\ge0\) and \(\int G_t=1\).
+
+\subsection{Computing one limit in two ways}
+For \(t>0\), set
+\[
+ I_t(x)=\int\wh f(\xi)e^{-\pi t|\xi|^2}e^{2\pi i x\cdot\xi}\dd\xi.
+\]
+On the frequency side, dominated convergence applies with majorant \(|\wh f|\), so
+\begin{equation}\label{eq:inversionlimit}
+ I_t(x)\longrightarrow\int\wh f(\xi)e^{2\pi i x\cdot\xi}\dd\xi
+                   \quad(t\downarrow0).
+\end{equation}
+On the spatial side,
+\[
+ \int\!\int|f(y)|e^{-\pi t|\xi|^2}\dd y\dd\xi
+                =\norm f_1t^{-n/2}<\infty.
+\]
+Fubini and \eqref{eq:gaussiantransform} now give
+\[
+ I_t(x)=\int f(y)G_t(x-y)\dd y=(G_t*f)(x).
+\]
+It remains to show that this average tends to \(f(x)\). Since \(G_t\) has integral one,
+\[
+ (G_t*f)(x)-f(x)=\int G_t(z)(f(x-z)-f(x))\dd z.
+\]
+Given \(\varepsilon>0\), choose \(\delta>0\) so that
+\(|f(x-z)-f(x)|<\varepsilon\) for \(|z|<\delta\). The integral over this region has absolute value at most \(\varepsilon\). On the remaining region it is bounded by
+\[
+ t^{-n/2}e^{-\pi\delta^2/t}\norm f_1
+       +|f(x)|\int_{|z|\ge\delta}G_t(z)\dd z.
+\]
+The first term tends to zero. In the second, the substitution \(z=\sqrt t\,w\) gives the tail of the integrable function \(e^{-\pi|w|^2}\) outside a ball of radius \(\delta/\sqrt t\); that tail also tends to zero. Thus
+\((G_t*f)(x)\to f(x)\). Comparing with \eqref{eq:inversionlimit} proves \eqref{eq:inversion}.
+
+\clearpage
+\section*{Source note}
+The expository approach was informed by Tao's analysis excerpt~\cite{tao}.
+
+\begin{thebibliography}{9}
+\addcontentsline{toc}{section}{References}
+\bibitem{project}
+\emph{Fourier Methods: A Beginner's Handout. Sobolev Spaces, Image Denoising, and Linear PDEs}. Supplied project handout, Sections 5--11. Author and date unspecified in the supplied copy.
+
+\bibitem{vese-sobolev}
+Luminita Vese, \emph{Useful results}, Math 269C course handout, pp.~1--2 (derivative norms and seminorms; Fourier definition of \(H^s\)).
+\url{https://www.math.ucla.edu/~lvese/269c.1.13s/THM.pdf}.
+
+\bibitem{vese-pde}
+Luminita Vese, \emph{HW \#4}, Math 269C, Problem 4.
+\url{https://www.math.ucla.edu/~lvese/269c.1.19s/HW4.pdf}.
+
+\bibitem{pcmi}
+Luminita Vese,
+\emph{An Introduction to Mathematical Image Processing}, IAS/Park City Mathematics Institute, Undergraduate Summer School, 2010, working version, pp.~25--30. Teaching assistant: Todd Wittman.
+\url{https://www.math.ucla.edu/~lvese/155.1.09w/PCMI_USS_2010/Lectures.pdf}.
+
+\bibitem{tao}
+Terence Tao, \emph{Analysis}, supplied excerpt, Preface and Chapter 1. Edition unspecified in the supplied copy.
+\end{thebibliography}
+\end{document}
